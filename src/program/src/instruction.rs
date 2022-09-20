@@ -3,8 +3,8 @@ use std::convert::TryInto;
 
 #[derive(Debug)]
 pub enum CalculatorInstruction {
-    Increament,
-    Decreament,
+    Increment,
+    Decrement,
     Set(u32),
 }
 
@@ -23,10 +23,10 @@ impl CalculatorInstruction {
 
         match tag {
             0 => {
-                return Ok(CalculatorInstruction::Increament);
+                return Ok(CalculatorInstruction::Increment);
             }
             1 => {
-                return Ok(CalculatorInstruction::Decreament);
+                return Ok(CalculatorInstruction::Decrement);
             }
             2 => {
                 if rest.len() != 4 {
@@ -43,12 +43,15 @@ impl CalculatorInstruction {
                 //
                 match val {
                     Ok(i) => {
-                        return Ok(HelloInstruction::Set(u32::from_ke_bytes(i)));
+                        return Ok(CalculatorInstruction::Set(u32::from_le_bytes(i)));
                     }
                     _ => {
                         return Err(ProgramError::InvalidInstructionData);
                     }
                 }
+            }
+            _ => {
+                return Err(ProgramError::InvalidInstructionData);
             }
         }
     }
