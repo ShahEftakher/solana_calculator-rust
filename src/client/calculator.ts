@@ -14,6 +14,7 @@ import * as borsh from 'borsh';
 
 //import all uitls
 import { getPayer, getRpcUrl, createKeypairFromFile } from './utils';
+import { createDecrementInstruction, createIncrementInstruction, createSetInstruction } from './instructionCreator';
 
 //connection to chain
 let connection: Connection;
@@ -41,7 +42,7 @@ const PROGRAM_PATH_SO = path.join(PROGRAM_PATH, 'rust_counter.so');
 //now the keypair path is provided for interaction
 const PROGRAM_KEYPAIR_PATH = path.join(
   PROGRAM_PATH,
-  'rust_counter-keypair.json'
+  'rust_calculator-keypair.json'
 );
 
 //the documentation of helloworld example said: The state of a greeting account managed by the hello world program
@@ -57,7 +58,7 @@ class CounterAccount {
   }
 }
 
-//a mapping with the CounterAccoun, the data account to the counter-rust program
+//a mapping with the CounterAccount, the data account to the counter-rust program
 //here the format will be the same as the struct of the rust account
 const CounterShema = new Map([
   [CounterAccount, { kind: 'struct', fields: [['counter', 'u32']] }],
@@ -195,7 +196,7 @@ export const calculate = async (): Promise<void> => {
     keys: [{ pubkey: countPubKey, isSigner: false, isWritable: true }],
     programId,
     //allocating a Buffer of size zero
-    data: Buffer.alloc(0),
+    data: createSetInstruction(60),
   });
   //send transaction
   await sendAndConfirmTransaction(

@@ -38,17 +38,18 @@ pub fn process_instruction(
     let mut calculator_account = CalculatorAccount::try_from_slice(&account.data.borrow())?;
     //match the instruction to find out what to do
     match instruction {
-        CalculatorInstruction::Increment =>
-            Ok({
-                calculator_account.result += 1;
-            }),
-        CalculatorInstruction::Decrement =>
-            Ok({
-                calculator_account.result -= 1;
-            }),
-        CalculatorInstruction::Set(val) =>
-            Ok({
-                calculator_account.result = val;
-            }),
+        CalculatorInstruction::Increment => {
+            calculator_account.result += 1;
+        }
+        CalculatorInstruction::Decrement => {
+            calculator_account.result -= 1;
+        }
+        CalculatorInstruction::Set(val) => {
+            calculator_account.result = val;
+        }
     }
+
+    calculator_account.serialize(&mut &mut account.data.borrow_mut()[..])?;
+    msg!("Result: {}", calculator_account.result);
+    Ok(())
 }
